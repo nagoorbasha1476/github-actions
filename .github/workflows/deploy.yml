@@ -16,7 +16,7 @@ jobs:
         with:
           java-version: '11'
 
-      - name: Build with Maven
+      - name: Build Maven
         run: mvn package
 
       - name: Build and push Docker image
