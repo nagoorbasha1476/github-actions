@@ -1,0 +1,37 @@
+name: My Deployment Workflow
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      - name: Build with Maven
+        run: mvn package
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: my-image:latest
+
+      - name: Set up Kubernetes CLI
+        uses: ahmadnassri/action-kubectl@v1.1.2
+        with:
+          kubectl-version: '1.22.3'
+
+      - name: Deploy to Kubernetes
+        run: kubectl apply -f deployment.yaml
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}
